@@ -20,11 +20,8 @@ public class LightSeekBar extends View {
 
     private float mLastCoordinateX;
 
+    private int mThumbRadius = 10;
 
-    private float BG_LINE_HEIGHT; // progress bar background line height
-
-
-    private int mThumbRadius = -1;
 
     private Paint mPaint;
 
@@ -61,25 +58,34 @@ public class LightSeekBar extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Log.d(TAG, "onDraw");
-        int vWidth = getMeasuredWidth();
+        Log.d(TAG, "onDraw : " + getMeasuredWidth());
+        float vWidth = getMeasuredWidth();
         int vHeight = getMeasuredHeight();
-        if (mThumbRadius == -1) {
-            mThumbRadius = vHeight >> 1;
-        }
+
         // 1. draw the background
         mPaint.setColor(Color.GREEN);
         int left = mThumbRadius;
         float top = vHeight * 0.4f;
-        int right = vWidth - mThumbRadius;
+        float right = vWidth - mThumbRadius;
         float bottom = vHeight - top;
         canvas.drawRoundRect(left, top, right, bottom, 50, 50, mPaint);
         // 2. draw the thumb according the touch coordinate
         mPaint.setColor(Color.YELLOW);
-        if (mLastCoordinateX == 0) {
-            mLastCoordinateX = mThumbRadius;
+
+        // check section the coordinate in
+        float unit = right / (LEVEL_MAX - 1);
+        float i = Math.round(mLastCoordinateX / unit);
+        mLastCoordinateX = unit * i;
+
+        if (mLastCoordinateX < left) {
+            mLastCoordinateX = left;
         }
-        canvas.drawCircle(mLastCoordinateX, mThumbRadius, mThumbRadius, mPaint);
+
+        if (mLastCoordinateX > right) {
+            mLastCoordinateX = right;
+        }
+
+        canvas.drawCircle(mLastCoordinateX, vHeight >> 1, mThumbRadius, mPaint);
     }
 
     @Override
@@ -88,25 +94,11 @@ public class LightSeekBar extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
-                float nowX = event.getX();
-
-                if (nowX >= getMeasuredHeight() >> 1 && nowX <= getMeasuredWidth() - (getMeasuredHeight() >> 1)) {
-                    mLastCoordinateX = nowX;
-                }
-
-                //Log.d(TAG, "ACTION_DOWN => X:" + mLastCoordinateX + " Y:" + mLastCoordinateY);
-                invalidate();
+                updateLastCoordinate(event.getX());
             }
             break;
             case MotionEvent.ACTION_MOVE: {
-                float nowX = event.getX();
-
-                if (nowX >= getMeasuredHeight() >> 1 && nowX <= getMeasuredWidth() - (getMeasuredHeight() >> 1)) {
-                    mLastCoordinateX = nowX;
-                }
-
-                //Log.d(TAG, "ACTION_DOWN => X:" + mLastCoordinateX + " Y:" + mLastCoordinateY);
-                invalidate();
+                updateLastCoordinate(event.getX());
             }
             break;
             case MotionEvent.ACTION_CANCEL:
@@ -121,5 +113,10 @@ public class LightSeekBar extends View {
         return true;
     }
 
+    private void updateLastCoordinate(float nowX) {
+        mLastCoordinateX = nowX;
+        Log.d(TAG, "ACTION_DOWN => X:" + mLastCoordinateX);
+        invalidate();
+    }
 
 }

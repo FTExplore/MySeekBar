@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context="com.myapplication.MainActivity">
 
     <RelativeLayout
-        android:layout_width="300dp"
+        android:layout_width="500dp"
         android:layout_height="300dp"
 
         app:layout_constraintBottom_toBottomOf="parent"
@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.myapplication.LightSeekBar
-            android:layout_width="200dp"
+            android:layout_width="300dp"
             android:layout_height="30dp"
             android:background="#000000"
             android:layout_centerInParent="true" />
