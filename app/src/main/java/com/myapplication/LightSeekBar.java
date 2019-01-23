@@ -16,7 +16,7 @@ public class LightSeekBar extends View {
 
     private int LEVEL_MAX = 10;
 
-    private int LEVEL_CURRENT = 5;
+    private int LEVEL_CURRENT = -1;
 
     private float mLastCoordinateX;
 
@@ -24,6 +24,28 @@ public class LightSeekBar extends View {
 
 
     private Paint mPaint;
+
+    public void setLEVEL_MAX(int LEVEL_MAX) {
+        this.LEVEL_MAX = LEVEL_MAX;
+    }
+
+    public void setThumbRadius(int mThumbRadius) {
+        this.mThumbRadius = mThumbRadius;
+    }
+
+    public interface OnProgerssBarListener {
+        void onProgressChange(int i);
+    }
+
+    private OnProgerssBarListener mCallBack;
+
+    public void setOnProgerssBarListener(OnProgerssBarListener mCallBack) {
+        this.mCallBack = mCallBack;
+    }
+
+    public int getLEVEL_CURRENT() {
+        return LEVEL_CURRENT;
+    }
 
     public LightSeekBar(Context context) {
         super(context);
@@ -58,7 +80,7 @@ public class LightSeekBar extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Log.d(TAG, "onDraw : " + getMeasuredWidth());
+        //Log.d(TAG, "onDraw : " + getMeasuredWidth());
         float vWidth = getMeasuredWidth();
         int vHeight = getMeasuredHeight();
 
@@ -86,6 +108,14 @@ public class LightSeekBar extends View {
         }
 
         canvas.drawCircle(mLastCoordinateX, vHeight >> 1, mThumbRadius, mPaint);
+
+        // 3. callback
+        if (LEVEL_CURRENT != i && i >= 0 && i <= (LEVEL_MAX - 1)) {
+            LEVEL_CURRENT = (int) i;
+            if (mCallBack != null) {
+                mCallBack.onProgressChange(LEVEL_CURRENT);
+            }
+        }
     }
 
     @Override
@@ -115,7 +145,7 @@ public class LightSeekBar extends View {
 
     private void updateLastCoordinate(float nowX) {
         mLastCoordinateX = nowX;
-        Log.d(TAG, "ACTION_DOWN => X:" + mLastCoordinateX);
+        //Log.d(TAG, "ACTION_DOWN => X:" + mLastCoordinateX);
         invalidate();
     }
 

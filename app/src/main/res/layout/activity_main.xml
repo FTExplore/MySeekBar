@@ -16,6 +16,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.myapplication.LightSeekBar
+            android:id="@+id/seek"
             android:layout_width="300dp"
             android:layout_height="30dp"
             android:background="#000000"
